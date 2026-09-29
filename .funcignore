@@ -1,0 +1,16 @@
+# Azure Functions Root Deployment Ignore
+node_modules/
+.next/
+.git/
+.gitignore
+.vscode/
+.DS_Store
+local.settings.json
+.env
+.env.*
+*.env
+coverage/
+*.log
+tests/
+scripts/
+*.tsbuildinfo

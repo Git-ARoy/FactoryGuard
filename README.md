@@ -232,16 +232,19 @@ All environment variables are declared in `.env.example`:
 
 ## 7. Cloud Deployment to Azure
 
+> [!TIP]
+> **Complete Workshop Guide**: For a comprehensive, step-by-step walkthrough detailing how to provision each Azure resource in the Azure Portal and deploy both the Functions backend and App Service frontend from VS Code, consult **[DEPLOYMENT.md](DEPLOYMENT.md)**.
+
 ### 1. Azure Resources:
-- **Resource Group**: `rg-factoryguard-prod`
-- **App Service Plan**: Linux B1 or higher (Node.js 24 LTS)
-- **Azure Cosmos DB**: NoSQL account
-- **Azure Storage Account**: Standard general-purpose v2
-- **Azure Function App**: Node.js 24 LTS (serverless ingestion)
-- **Application Insights**: Enterprise monitoring resource
+- **Resource Group**: `rg-factoryguard-workshop`
+- **Azure Application Insights**: Enterprise distributed tracing & metrics
+- **Azure Storage Account**: Standard general-purpose v2 (LRS)
+- **Azure Cosmos DB**: NoSQL account (Serverless or Provisioned)
+- **Azure Function App**: Linux, Node.js 24 LTS (Consumption or Flex)
+- **Azure App Service**: Linux, Node.js 24 LTS (B1 or Free F1)
 
 ### 2. Zero-Touch Database & Storage Provisioning:
-Manual database or container creation in the Azure Portal is not required. FactoryGuard automatically initializes its cloud data stores:
+Manual database or container creation in the Azure Portal is **not required**. FactoryGuard automatically initializes its cloud data stores:
 - Upon connecting to Azure Cosmos DB, the application automatically creates the `factoryguard` database and all 4 partitioned containers (`machines`, `telemetry`, `incidents`, `documents`), and seeds the 24 industrial machinery records, baseline telemetry history, initial incidents, and document metadata.
 - Upon connecting to Azure Blob Storage, it automatically provisions the `documents` container and uploads all technical manuals.
 
@@ -250,23 +253,32 @@ To manually re-seed or verify your Azure database via CLI:
 npm run seed:cosmos
 ```
 
-### 3. Deploying to Azure App Service:
-Deploy via Azure CLI, GitHub Actions, or VS Code Azure Tools:
+### 3. Deploying Azure Functions (Backend API):
+1. Validate deployment package sizing and configuration:
+   ```bash
+   npm run verify:functions
+   ```
+   *(Ensures package is ~56 KB without node_modules, preventing Kudu central directory errors)*
+2. In VS Code, open the Azure Functions extension tab, right-click the `functions` folder, and select **Deploy to Function App...**.
+3. Configure Application Settings in the Azure Portal (see [DEPLOYMENT.md](DEPLOYMENT.md#step-7-configure-function-app-application-settings)).
+
+### 4. Deploying Azure App Service (Frontend):
+Deploy via VS Code Azure App Service extension or Azure CLI:
 ```bash
 az webapp up \
   --name <your-app-service-name> \
-  --resource-group rg-factoryguard-prod \
+  --resource-group rg-factoryguard-workshop \
   --runtime "NODE:24-lts"
 ```
 
-Set the environment variables from `.env` in the App Service Application Settings.
+Configure Application Settings in the Azure Portal (see [DEPLOYMENT.md](DEPLOYMENT.md#step-9-configure-app-service-application-settings)).
 
 ---
 
 ## 8. Testing & Validation
 
 ```bash
-# Run unit, integration, and acceptance tests
+# Run unit, integration, and acceptance tests (22 tests)
 npm test
 
 # Run TypeScript type check
@@ -275,14 +287,18 @@ npm run typecheck
 # Verify Next.js production build
 npm run build
 
-# Compile Azure Functions
-npx tsc -p functions/tsconfig.json
+# Verify Azure Functions build & deployment package
+npm run verify:functions
 ```
 
 ---
 
 ## 9. Troubleshooting
 
-- **Cosmos DB Connection Failure / Timeout**: Verify that your IP or Azure App Service outbound IP addresses are permitted in the Cosmos DB Firewall settings, and confirm that `COSMOS_ENDPOINT` and `COSMOS_KEY` are correct.
-- **Blob Storage 403 Forbidden**: Ensure your storage connection string contains an active account key to permit SAS generation, or verify container access policies in the Azure Portal.
-- **Port In Use**: Specify an alternate port when running locally: `PORT=3001 npm run dev`.
+Consult the [Detailed Troubleshooting Runbook](DEPLOYMENT.md#6-troubleshooting--diagnostic-runbook) for full diagnostic steps on:
+- **Kudu Central Directory / Zip Package Size**: Prevented by `functions/.funcignore` and verified with `npm run verify:functions`.
+- **`func: command not found`**: Local Core Tools are unnecessary; VS Code remote build is utilized.
+- **Cosmos DB Firewall**: Enable "Accept connections from within public Azure data centers".
+- **Blob Storage 403 Forbidden**: Confirm connection string account key and container name.
+- **Node.js Runtime Version**: Ensure both Function App and App Service are configured for **Node.js 24 LTS**.
+- **Port In Use (Local)**: Specify an alternate port when running locally: `PORT=3001 npm run dev`.
