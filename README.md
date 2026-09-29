@@ -1,35 +1,27 @@
 # FactoryGuard
 
-**Intelligent Industrial Monitoring & Predictive Maintenance Platform**  
-*Built for Azure LaunchPad 2026 • Microsoft Azure Developer Community Club*
+**Intelligent Industrial Operations & Predictive Maintenance Platform**
+
+FactoryGuard is an enterprise-grade, cloud-native industrial monitoring and predictive maintenance platform built on Microsoft Azure. Designed for high-reliability manufacturing and machining environments, FactoryGuard delivers real-time telemetry processing, deterministic multi-signal anomaly detection, automated incident lifecycles, and technical document archiving across industrial plant equipment.
 
 ---
 
-> [!WARNING]
-> **CRITICAL INFRASTRUCTURE RULE NOTICE**  
-> This initial repository intentionally does **NOT** contain Azure Bicep infrastructure-as-code files (`main.bicep`, `modules/*.bicep`, etc.).  
-> Infrastructure-as-code is deferred and will be introduced in a dedicated subsequent release. Do not generate or commit Bicep files to this repository version.
+## 1. Key Capabilities
 
----
-
-## 1. Project Overview
-
-**FactoryGuard** is a cloud-native industrial operations and predictive maintenance monitoring platform. It simulates an advanced manufacturing plant where machinery continuously emits telemetry (spindle temperatures, tri-axial vibrations, fluid/coolant pressures, and operational hours). 
-
-The platform gives plant operators and maintenance engineers a high-density, real-time control room dashboard to:
-1. Monitor fleet-wide machine health and live sensor metrics.
-2. Ingest continuous telemetry through serverless API gateways.
-3. Evaluate deterministic anomaly thresholds and multi-signal conditions.
-4. Persist durable operational state, time-series events, and incidents in **Azure Cosmos DB**.
-5. Retrieve technical manuals, SOPs, and inspection reports from **Azure Blob Storage**.
-6. Observe application diagnostics and structured logs via **Azure Application Insights**.
-7. Execute deterministic **Workshop Demo Simulations** (`NORMAL`, `WARNING`, `CRITICAL`, `RECOVERY`) to demonstrate the complete cloud lifecycle.
+- **Real-Time Machinery Telemetry**: Continuous monitoring of spindle temperatures, tri-axial vibration, system pressure, and machine operating hours across industrial production lines.
+- **Deterministic Anomaly & Threat Detection**: Multi-signal rules engine that classifies operating telemetry against calibrated safety envelopes (Normal, Warning, Critical) with automatic compound fault detection.
+- **Incident Lifecycle Management**: Real-time operational incident alerting with automatic deduplication, telemetry snapshots, and automated incident resolution upon equipment recovery.
+- **Industrial Simulation Studio**: Built-in interactive scenario generator enabling operational stress testing, threshold evaluation, and telemetry validation (`NORMAL`, `WARNING`, `CRITICAL`, `RECOVERY`).
+- **Technical Document Vault**: Integrated document repository providing signed, short-lived SAS access to equipment operating manuals, calibration SOPs, and inspection reports in Azure Blob Storage.
+- **Fleet & Line Performance Analytics**: High-density plant overview dashboard tracking fleet health scores, production line status distributions, and active alert streams.
+- **Enterprise Observability**: End-to-end telemetry logging, execution metrics, and diagnostics integrated with Azure Application Insights.
+- **Zero-Touch Azure Provisioning**: Automatically initializes Cosmos DB databases, partitioned containers, machine registries, and Blob Storage documentation upon initial connection.
 
 ---
 
 ## 2. Cloud Architecture
 
-FactoryGuard brings five core Azure services together into one cohesive, industrial-grade architecture:
+FactoryGuard combines five core Azure services into a cohesive, highly scalable industrial IoT architecture:
 
 ```text
                                   +------------------------------------+
@@ -40,16 +32,16 @@ FactoryGuard brings five core Azure services together into one cohesive, industr
                                                     v
                                   +------------------------------------+
                                   |         Azure App Service          |
-                                  | Next.js 14 App Router (Node 24 LTS) |
+                                  | Next.js 14 App Router (Node 24 LTS)|
                                   |   • Industrial Web Dashboard       |
-                                  |   • REST Presentation APIs         |
+                                  |   • REST API Gateway               |
                                   +-----------------+------------------+
                                                     |
                                     Internal Proxy  |  Server-to-Server
                                                     v
                                   +------------------------------------+
                                   |          Azure Functions           |
-                                  |   Serverless Telemetry Processing  |
+                                  |   Serverless Telemetry Ingestion   |
                                   |   • Rule-Based Anomaly Engine      |
                                   |   • Incident Transition Logic      |
                                   +--------+------------------+--------+
@@ -66,38 +58,59 @@ FactoryGuard brings five core Azure services together into one cohesive, industr
                                            |                  |
                                   +--------+------------------+--------+
                                   |     Azure Application Insights     |
-                                  |   • Simulation Event Telemetry     |
+                                  |   • Event & Diagnostic Telemetry   |
                                   |   • Latency & Exception Tracing    |
                                   +------------------------------------+
 ```
 
-### Service Responsibilities:
+### Azure Services & Roles
 
-| Azure Service | Responsibility in FactoryGuard |
+| Azure Service | Role in FactoryGuard |
 |---|---|
-| **Azure App Service** | Hosts the web application, real-time operations dashboard, and REST API proxy. |
-| **Azure Functions** | Serverless telemetry processing, deterministic anomaly threshold evaluation, and incident state updates. |
-| **Azure Cosmos DB** | Managed NoSQL storage for fleet registries, time-series telemetry events, and active/resolved incidents. |
-| **Azure Blob Storage** | Object storage for fictional machine operating manuals, calibration SOPs, and inspection PDFs. |
-| **Application Insights** | End-to-end monitoring, dependency tracing, latency measurements, and structured event diagnostics. |
+| **Azure App Service** | Hosts the Next.js 14 web application, real-time control room dashboard, and API endpoints. |
+| **Azure Functions** | Serverless telemetry processing, deterministic anomaly threshold evaluation, and state transitions. |
+| **Azure Cosmos DB** | Globally scalable NoSQL persistence for machinery registries, time-series telemetry events, and incident logs. |
+| **Azure Blob Storage** | Secure object storage for machine manuals, calibration standards, and inspection documentation. |
+| **Azure Application Insights** | Distributed tracing, execution metrics, error logging, and performance auditing. |
 
 ---
 
-## 3. Repository Structure
+## 3. Anomaly Detection & Operating Envelopes
+
+FactoryGuard implements deterministic domain rules to detect equipment degradation before physical failure occurs:
+
+### Metric Operating Bands
+
+| Metric | Normal Range | Warning Range | Critical Range | Units |
+|---|---|---|---|---|
+| **Temperature** | 45.0 – 70.0 | 70.1 – 90.0 | > 90.0 | °C |
+| **Vibration** | 0.0 – 6.0 | 6.1 – 10.0 | > 10.0 | mm/s |
+| **Pressure** | 90.0 – 110.0 | 110.1 – 118.0 | > 118.0 | PSI |
+
+### Anomaly Classification Logic
+
+- **NORMAL**: All metrics operate within normal limits. Health score: **80 – 100**.
+- **WARNING**: One or two metrics enter the warning threshold, or minor degradation is detected. Health score: **50 – 79**.
+- **CRITICAL**: Any metric crosses into the critical threshold, **OR** all three metrics enter warning levels simultaneously (compound multi-signal failure). Health score: **0 – 49**.
+- **Automated Incident Lifecycle**: Anomaly detection creates an incident record with a telemetry snapshot. Subsequent events for the same equipment update existing open incidents to eliminate notification spam. When telemetry returns to normal, open incidents are automatically resolved.
+
+---
+
+## 4. Repository Structure
 
 ```text
 FactoryGuard/
-├── app/                                 # Next.js App Router (Web Dashboard & API Gateway)
+├── app/                                 # Next.js App Router (Dashboard & API Endpoints)
 │   ├── (dashboard)/                     # Operations UI layouts and views
-│   │   ├── page.tsx                     # Plant Overview Dashboard (FR-01)
+│   │   ├── page.tsx                     # Plant Overview Dashboard
 │   │   ├── machines/
-│   │   │   ├── page.tsx                 # Machinery Fleet & Registry (FR-02)
-│   │   │   └── [machineId]/page.tsx     # Machine Operational Detail & Real-Time Charts (FR-03)
-│   │   ├── incidents/page.tsx           # Incident & Alert Management Center (FR-07)
-│   │   ├── simulation/page.tsx          # Workshop Simulation Studio (FR-08)
-│   │   ├── documents/page.tsx           # Machine Documentation Library (FR-11)
-│   │   └── system/page.tsx              # Cloud Architecture & Health Diagnostics (Goal 2)
-│   ├── api/                             # REST APIs conforming to API_SPEC.md
+│   │   │   ├── page.tsx                 # Machinery Fleet & Registry
+│   │   │   └── [machineId]/page.tsx     # Machine Operational Detail & Real-Time Charts
+│   │   ├── incidents/page.tsx           # Incident & Alert Management Center
+│   │   ├── simulation/page.tsx          # Industrial Simulation Studio
+│   │   ├── documents/page.tsx           # Machine Documentation Library
+│   │   └── system/page.tsx              # Cloud Architecture & Health Diagnostics
+│   ├── api/                             # REST API Endpoints
 │   │   ├── health/route.ts              # GET /api/health
 │   │   ├── dashboard/summary/route.ts   # GET /api/dashboard/summary
 │   │   ├── machines/route.ts            # GET /api/machines
@@ -110,53 +123,54 @@ FactoryGuard/
 │   │   ├── documents/route.ts           # GET /api/documents
 │   │   └── documents/[documentId]/download-url/route.ts # GET /api/documents/:documentId/download-url
 │   ├── globals.css                      # Industrial dark theme styling
-│   └── layout.tsx                       # Root layout & shell providers
-├── components/                          # Polished UI Components
+│   └── layout.tsx                       # Root layout & navigation shell
+├── components/                          # Reusable UI Components
 │   ├── shell/                           # Header, Sidebar, QuickSimulationBar
 │   ├── telemetry/                       # Real-time SVG time-series charts (Temp, Vibration, Pressure)
-│   └── ui/                              # High-density industrial components (Badges, Gauges, Cards, Skeletons)
+│   └── ui/                              # Industrial UI components (Gauges, Badges, Cards, Skeletons)
 ├── lib/                                 # Shared Domain, Data Repositories & Services
 │   ├── config/env.ts                    # Centralized environment configuration
-│   ├── domain/                          # Pure business logic isolated from UI & SDKs
-│   │   ├── types.ts                     # TypeScript schemas matching ARCHITECTURE.md
-│   │   ├── thresholds.ts                # Baseline operating bands (FR-05)
-│   │   ├── anomaly-engine.ts            # Deterministic threshold rule engine & health scoring
-│   │   └── simulation-engine.ts         # Deterministic scenario generators (Normal, Warning, Critical, Recovery)
-│   ├── data/                            # Repository pattern abstraction
-│   │   ├── interfaces.ts                # IMachineRepository, ITelemetryRepository, IIncidentRepository, IDocumentRepository
-│   │   ├── cosmos/                      # Azure Cosmos DB SDK implementation
-│   │   ├── local/                       # High-fidelity in-memory repository (local fallback)
-│   │   └── factory.ts                   # Repository factory switching based on configuration
-│   ├── storage/                         # Azure Blob Storage client with SAS token generation
+│   ├── domain/                          # Business logic isolated from UI & SDKs
+│   │   ├── types.ts                     # TypeScript interfaces and data models
+│   │   ├── thresholds.ts                # Sensor operating thresholds
+│   │   ├── anomaly-engine.ts            # Threshold evaluation rules & health scoring
+│   │   └── simulation-engine.ts         # Deterministic scenario generator
+│   ├── data/                            # Cosmos DB data access layer
+│   │   ├── interfaces.ts                # Repository contracts
+│   │   ├── cosmos/                      # Azure Cosmos DB repository implementations
+│   │   │   ├── index.ts                 # Cosmos machine, telemetry, incident, doc repos
+│   │   │   └── provisioner.ts           # Automated database & container provisioner
+│   │   └── factory.ts                   # Repository factory
+│   ├── storage/                         # Azure Blob Storage client with SAS generation
 │   ├── observability/                   # Application Insights client & structured logging
-│   └── services/                        # Shared application services (Simulation, Dashboard, Machine, etc.)
+│   └── services/                        # Application domain services
 ├── functions/                           # Azure Functions v4 (TypeScript)
 │   ├── src/
-│   │   ├── index.ts                     # HTTP Trigger registrations
+│   │   ├── index.ts                     # Serverless HTTP Trigger endpoints
 │   │   └── domain.ts                    # Serverless anomaly engine & threshold evaluation
 │   ├── host.json
 │   ├── package.json
 │   └── tsconfig.json
-├── data/seed/                           # Realistic Industrial Seed Dataset
+├── data/seed/                           # Industrial Seed Dataset
 │   ├── machines.json                    # 24 machines across 4 production lines
 │   ├── telemetry.json                   # Time-series baseline telemetry
-│   ├── incidents.json                   # Open & historical incident records
+│   ├── incidents.json                   # Historical & active incidents
 │   ├── documents.json                   # Machine manual & SOP metadata
-│   └── sample-docs/                     # Fictional PDF/text manuals for Blob Storage
-├── tests/                               # Comprehensive Test Suites
-│   ├── unit/                            # Anomaly engine, health scores, simulation generator, deduplication
-│   ├── integration/                     # Application services & repository integration
-│   └── acceptance/                      # 10-step workshop demo acceptance test
+│   └── sample-docs/                     # PDF and text technical manuals
+├── tests/                               # Test Suites
+│   ├── unit/                            # Anomaly engine, health scores, simulation generator
+│   ├── integration/                     # Application services & repository tests
+│   └── acceptance/                      # End-to-end platform acceptance test
 ├── scripts/
-│   └── seed-cosmos.ts                   # Azure Cosmos DB and Blob Storage seeding script
-├── .env.example                         # Safe configuration template
+│   └── seed-cosmos.ts                   # Azure Cosmos DB and Blob Storage manual seeding utility
+├── .env.example                         # Configuration template
 ├── package.json                         # Dependencies & scripts
 └── tsconfig.json                        # TypeScript compiler options
 ```
 
 ---
 
-## 4. Getting Started: Cloud Deployment & Configuration
+## 5. Getting Started & Deployment
 
 FactoryGuard is designed as an Azure cloud-native platform. Simply provide your Azure resource credentials in `.env` (or in Azure App Service Configuration), and the application **automatically provisions the Cosmos DB database and containers, auto-seeds all 24 machinery records and telemetry history, and uploads technical manuals to Azure Blob Storage** on first connection—zero manual database or container creation required!
 
@@ -165,7 +179,7 @@ FactoryGuard is designed as an Azure cloud-native platform. Simply provide your 
 - **npm**: v11.x+ (bundled with Node 24)
 - **Azure Subscription**: Resource group with Cosmos DB (NoSQL) and Storage Account
 
-### Quickstart:
+### Local Development Setup:
 
 ```bash
 # 1. Clone the repository
@@ -186,19 +200,19 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser. FactoryGuard will auto-provision and connect to your Azure resources!
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-## 5. Environment Configuration
+## 6. Environment Configuration
 
 All environment variables are declared in `.env.example`:
 
-| Variable | Description | Default / Example |
+| Variable | Description | Example |
 |---|---|---|
-| `APP_ENV` | Application environment | `development` / `production` |
+| `APP_ENV` | Application environment | `production` / `development` |
 | `APP_VERSION` | Application build version | `1.0.0` |
-| `PORT` | Local web server port | `3000` |
+| `PORT` | Web server port | `3000` |
 | `COSMOS_ENDPOINT` | Azure Cosmos DB URI | `https://<account>.documents.azure.com:443/` |
 | `COSMOS_KEY` | Azure Cosmos DB Primary Key | `<key>` |
 | `COSMOS_DATABASE` | Database name | `factoryguard` |
@@ -211,23 +225,54 @@ All environment variables are declared in `.env.example`:
 | `STORAGE_CONTAINER_NAME` | Blob container name | `documents` |
 | `FUNCTION_BASE_URL` | Azure Functions API base URL | `http://localhost:7071` *(optional internal proxy)* |
 | `FUNCTION_INTERNAL_SECRET` | Azure Functions access key | `<key>` |
-| `APPLICATIONINSIGHTS_CONNECTION_STRING` | App Insights connection string | `InstrumentationKey=...` *(optional)* |
+| `APPLICATIONINSIGHTS_CONNECTION_STRING` | App Insights connection string | `InstrumentationKey=...` |
 | `SIMULATION_DEFAULT_MACHINE_ID` | Default demo machine identifier | `CNC-02` |
 
 ---
 
-## 6. Testing & Quality Checks
+## 7. Cloud Deployment to Azure
 
-FactoryGuard includes comprehensive test suites across unit, integration, and end-to-end acceptance levels:
+### 1. Azure Resources:
+- **Resource Group**: `rg-factoryguard-prod`
+- **App Service Plan**: Linux B1 or higher (Node.js 24 LTS)
+- **Azure Cosmos DB**: NoSQL account
+- **Azure Storage Account**: Standard general-purpose v2
+- **Azure Function App**: Node.js 24 LTS (serverless ingestion)
+- **Application Insights**: Enterprise monitoring resource
+
+### 2. Zero-Touch Database & Storage Provisioning:
+Manual database or container creation in the Azure Portal is not required. FactoryGuard automatically initializes its cloud data stores:
+- Upon connecting to Azure Cosmos DB, the application automatically creates the `factoryguard` database and all 4 partitioned containers (`machines`, `telemetry`, `incidents`, `documents`), and seeds the 24 industrial machinery records, baseline telemetry history, initial incidents, and document metadata.
+- Upon connecting to Azure Blob Storage, it automatically provisions the `documents` container and uploads all technical manuals.
+
+To manually re-seed or verify your Azure database via CLI:
+```bash
+npm run seed:cosmos
+```
+
+### 3. Deploying to Azure App Service:
+Deploy via Azure CLI, GitHub Actions, or VS Code Azure Tools:
+```bash
+az webapp up \
+  --name <your-app-service-name> \
+  --resource-group rg-factoryguard-prod \
+  --runtime "NODE:24-lts"
+```
+
+Set the environment variables from `.env` in the App Service Application Settings.
+
+---
+
+## 8. Testing & Validation
 
 ```bash
-# Run unit and integration tests (Vitest)
+# Run unit, integration, and acceptance tests
 npm test
 
-# Run TypeScript typecheck (zero errors)
+# Run TypeScript type check
 npm run typecheck
 
-# Run production build
+# Verify Next.js production build
 npm run build
 
 # Compile Azure Functions
@@ -236,75 +281,8 @@ npx tsc -p functions/tsconfig.json
 
 ---
 
-## 7. Workshop Simulation Guide (The 10-Minute Live Demo)
-
-During **Azure LaunchPad 2026**, facilitators and participants can run this exact deterministic sequence:
-
-1. **Open Dashboard**: Navigate to `/` and verify the plant overview summary cards (24 machines, status distribution, health score ~82).
-2. **Select Demo Machine**: Notice **CNC-02** in the Quick Simulation Bar or navigate to `/machines/CNC-02`.
-3. **Simulate Warning Event**: Click **"Simulate Warning"** on `CNC-02`.
-   - Telemetry injected: `Temperature: 78.5°C`, `Vibration: 7.4 mm/s`, `Pressure: 106.8 PSI`.
-   - Machine status transitions to **WARNING** (Health: 68/100).
-   - An incident (`VIBRATION` / Warning) is created and visible in the active incident stream.
-4. **Inspect Persistence**: Refresh the page (`F5`) or open in a new tab. The changed state and incident remain persisted in Cosmos DB!
-5. **Deduplication Verification**: Trigger **"Simulate Warning"** again. Observe that the existing incident is updated with the new telemetry snapshot rather than spamming duplicate open alerts.
-6. **Simulate Critical Event**: Click **"Simulate Critical"**.
-   - Telemetry injected: `Temperature: 96.2°C`, `Vibration: 11.6 mm/s`, `Pressure: 119.5 PSI`.
-   - Machine transitions to **CRITICAL** (Health: 28/100).
-   - Critical Multi-Signal alert is opened.
-7. **Inspect Real-Time Charts**: Scroll down to the telemetry trend chart to see the temperature, vibration, and pressure curves crossing the warning and critical threshold bands with interactive hover inspection.
-8. **Inspect Technical Documents**: Click on the **CNC-02 Maintenance & Calibration Procedure.pdf** download button to test Blob Storage signed SAS token retrieval.
-9. **Recover / Reset Unit**: Click **"Reset to Normal"**.
-   - Unit returns to **NORMAL** (Health: ~96/100).
-   - Active open incidents are automatically marked **RESOLVED**.
-10. **Application Insights Verification**: Open the Azure Portal &rarr; Application Insights &rarr; Search &rarr; see structured events:
-    - `FactoryGuard.SimulationTriggered`
-    - `FactoryGuard.IncidentCREATED`
-    - `FactoryGuard.IncidentRESOLVED`
-
----
-
-## 8. Azure Cloud Deployment
-
-### 1. Prerequisites in Azure:
-- Resource Group: `rg-factoryguard-prod`
-- App Service Plan: Linux B1 or higher (Node.js 24 LTS)
-- Azure Cosmos DB for NoSQL account
-- Azure Storage Account (standard general-purpose v2)
-- Azure Function App (Node.js 24 LTS)
-- Application Insights resource
-
-### 2. Zero-Touch Automatic Database & Storage Provisioning:
-You do **NOT** need to create the database, containers, or upload manuals manually in the Azure Portal! FactoryGuard is engineered with automatic cloud provisioning and auto-seeding:
-- Upon connecting to Azure Cosmos DB, the application automatically creates the `factoryguard` database and all 4 partitioned containers (`machines`, `telemetry`, `incidents`, `documents`), and automatically seeds the 24 industrial machinery records, telemetry history, incidents, and document metadata from `data/seed/`.
-- Upon connecting to Azure Blob Storage, it automatically provisions the `documents` container and uploads all sample technical manuals.
-
-If you ever wish to re-seed or verify your Azure database independently via CLI:
-```bash
-npm run seed:cosmos
-```
-
-### 3. Deploying Web Application to Azure App Service:
-You can deploy using GitHub Actions, Azure CLI, or VS Code Azure Tools:
-```bash
-az webapp up \
-  --name <your-app-service-name> \
-  --resource-group rg-factoryguard-prod \
-  --runtime "NODE:24-lts"
-```
-
-Configure the Application Settings on App Service with the environment variables from your `.env`.
-
----
-
 ## 9. Troubleshooting
 
-- **Cosmos DB connection failure / timeout**: Verify that your client IP or Azure App Service outbound IP is allowed in the Cosmos DB Firewall settings, or check that `COSMOS_ENDPOINT` and `COSMOS_KEY` are correct.
-- **Blob download returns 403**: Ensure your storage connection string contains an active account key to permit SAS generation, or verify container access policies in the Azure Portal.
-- **Port 3000 in use**: Specify a different port: `PORT=3001 npm run dev`.
-
----
-
-## License
-
-FactoryGuard is developed for the Microsoft Azure Developer Community Club workshop. All sample machine data, serial identifiers, and documents are fictional.
+- **Cosmos DB Connection Failure / Timeout**: Verify that your IP or Azure App Service outbound IP addresses are permitted in the Cosmos DB Firewall settings, and confirm that `COSMOS_ENDPOINT` and `COSMOS_KEY` are correct.
+- **Blob Storage 403 Forbidden**: Ensure your storage connection string contains an active account key to permit SAS generation, or verify container access policies in the Azure Portal.
+- **Port In Use**: Specify an alternate port when running locally: `PORT=3001 npm run dev`.
