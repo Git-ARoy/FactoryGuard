@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "FactoryGuard Serverless Telemetry Processing & Backend APIs",
   "main": "dist/src/index.js",
+  "engines": {
+    "node": ">=24.0.0"
+  },
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",

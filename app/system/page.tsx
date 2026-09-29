@@ -45,7 +45,7 @@ export default function SystemArchitecturePage() {
       borderColor: 'border-cyan-500/40',
       description:
         'Hosts the Next.js web application, industrial operations dashboard, and presentation-tier API routes. Provides high-availability HTTPS serving.',
-      techDetails: 'Linux Node.js 20 App Service Plan • App Router • Server-Side Rendering',
+      techDetails: 'Linux Node.js 24 LTS App Service Plan • App Router • Server-Side Rendering',
       status: 'Active (Online)',
       statusOk: true,
     },

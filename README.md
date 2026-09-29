@@ -40,7 +40,7 @@ FactoryGuard brings five core Azure services together into one cohesive, industr
                                                     v
                                   +------------------------------------+
                                   |         Azure App Service          |
-                                  |   Next.js 14 App Router (Node 20)  |
+                                  | Next.js 14 App Router (Node 24 LTS) |
                                   |   • Industrial Web Dashboard       |
                                   |   • REST Presentation APIs         |
                                   +-----------------+------------------+
@@ -161,8 +161,8 @@ FactoryGuard/
 FactoryGuard is engineered with a **zero-credential local mode**. If Azure credentials are not provided, the application automatically uses an in-memory repository pre-seeded with the 24 industrial machines, telemetry history, incidents, and documents.
 
 ### Prerequisites:
-- **Node.js**: v20.x LTS (tested on Node 20.20.2)
-- **npm**: v10.x+
+- **Node.js**: v24.x LTS (tested on Node 24.21.0)
+- **npm**: v11.x+ (bundled with Node 24)
 
 ### Quickstart (under 60 seconds):
 
@@ -263,10 +263,10 @@ During **Azure LaunchPad 2026**, facilitators and participants can run this exac
 
 ### 1. Prerequisites in Azure:
 - Resource Group: `rg-factoryguard-prod`
-- App Service Plan: Linux B1 or higher (Node.js 20 LTS)
+- App Service Plan: Linux B1 or higher (Node.js 24 LTS)
 - Azure Cosmos DB for NoSQL account
 - Azure Storage Account (standard general-purpose v2)
-- Azure Function App (Node.js 20 LTS)
+- Azure Function App (Node.js 24 LTS)
 - Application Insights resource
 
 ### 2. Database & Storage Seeding:
@@ -282,7 +282,7 @@ You can deploy using GitHub Actions, Azure CLI, or VS Code Azure Tools:
 az webapp up \
   --name <your-app-service-name> \
   --resource-group rg-factoryguard-prod \
-  --runtime "NODE:20-lts"
+  --runtime "NODE:24-lts"
 ```
 
 Configure the Application Settings on App Service with the environment variables from your `.env`.
@@ -291,7 +291,7 @@ Configure the Application Settings on App Service with the environment variables
 
 ## 9. Troubleshooting
 
-- **App fails to start locally**: Ensure you are using Node.js 20 (`node -v`). Run `npm install` and `npm run dev`.
+- **App fails to start locally**: Ensure you are using Node.js 24 (`node -v` or `nvm use 24`). Run `npm install` and `npm run dev`.
 - **Cosmos DB connection timeout**: If running against real Azure Cosmos DB, verify that your IP is allowed in the Cosmos DB Firewall settings, or check that `COSMOS_ENDPOINT` and `COSMOS_KEY` are correct.
 - **Blob download returns 403**: When using real Blob Storage, ensure your storage connection string contains an active account key to permit SAS generation, or use the built-in local document streaming mode.
 - **Port 3000 in use**: Specify a different port: `PORT=3001 npm run dev`.
