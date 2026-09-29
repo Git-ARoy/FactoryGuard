@@ -44,3 +44,7 @@ coverage/
 # Azure / Local artifacts
 .azure/
 azure-functions/
+
+# Project Context & Internal Specifications
+FactoryGuard_Project_Context/
+
