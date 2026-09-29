@@ -2,12 +2,11 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { dashboardService } from '../../lib/services/dashboard.service';
 import { machineService } from '../../lib/services/machine.service';
 import { simulationService } from '../../lib/services/simulation.service';
-import { incidentService } from '../../lib/services/incident.service';
-import { localStore } from '../../lib/data/local/local-store';
+import { resetMockCosmosToSeed } from '../mocks/azure-cosmos-mock';
 
 describe('FactoryGuard Workshop 10-Minute Demo Acceptance Test (REQUIREMENTS.md Section 9)', () => {
   beforeEach(() => {
-    localStore.resetToSeed();
+    resetMockCosmosToSeed();
   });
 
   it('passes the end-to-end 10-step workshop flow deterministically', async () => {

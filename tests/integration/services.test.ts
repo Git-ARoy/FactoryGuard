@@ -2,11 +2,11 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { machineService } from '../../lib/services/machine.service';
 import { dashboardService } from '../../lib/services/dashboard.service';
 import { documentService } from '../../lib/services/document.service';
-import { localStore } from '../../lib/data/local/local-store';
+import { resetMockCosmosToSeed } from '../mocks/azure-cosmos-mock';
 
 describe('FactoryGuard Services Integration', () => {
   beforeEach(() => {
-    localStore.resetToSeed();
+    resetMockCosmosToSeed();
   });
 
   describe('MachineService', () => {

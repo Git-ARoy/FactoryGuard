@@ -17,17 +17,23 @@ export async function GET(
     return errorResponse('DOCUMENT_NOT_FOUND', `Document ${documentId} not found`, 404);
   }
 
-  const content = blobStorageService.getLocalDocumentContent(doc.blobName);
-  if (!content) {
-    return errorResponse('DOCUMENT_NOT_FOUND', `Document content not found`, 404);
-  }
+  try {
+    const { buffer, contentType } = await blobStorageService.downloadBlob(doc.blobName);
 
-  return new NextResponse(new Uint8Array(content.buffer), {
-    status: 200,
-    headers: {
-      'Content-Type': content.contentType,
-      'Content-Disposition': `inline; filename="${doc.blobName}"`,
-      'Content-Length': content.buffer.length.toString(),
-    },
-  });
+    return new NextResponse(new Uint8Array(buffer), {
+      status: 200,
+      headers: {
+        'Content-Type': contentType,
+        'Content-Disposition': `inline; filename="${doc.blobName}"`,
+        'Content-Length': buffer.length.toString(),
+      },
+    });
+  } catch (err: unknown) {
+    const error = err as Error;
+    return errorResponse(
+      'STORAGE_ERROR',
+      `Failed to retrieve document from Azure Blob Storage: ${error.message}`,
+      502
+    );
+  }
 }

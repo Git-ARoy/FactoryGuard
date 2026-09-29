@@ -156,32 +156,37 @@ FactoryGuard/
 
 ---
 
-## 4. Getting Started: Local Development
+## 4. Getting Started: Cloud Deployment & Configuration
 
-FactoryGuard is engineered with a **zero-credential local mode**. If Azure credentials are not provided, the application automatically uses an in-memory repository pre-seeded with the 24 industrial machines, telemetry history, incidents, and documents.
+FactoryGuard is designed as an Azure cloud-native platform. Simply provide your Azure resource credentials in `.env` (or in Azure App Service Configuration), and the application **automatically provisions the Cosmos DB database and containers, auto-seeds all 24 machinery records and telemetry history, and uploads technical manuals to Azure Blob Storage** on first connection—zero manual database or container creation required!
 
 ### Prerequisites:
 - **Node.js**: v24.x LTS (tested on Node 24.21.0)
 - **npm**: v11.x+ (bundled with Node 24)
+- **Azure Subscription**: Resource group with Cosmos DB (NoSQL) and Storage Account
 
-### Quickstart (under 60 seconds):
+### Quickstart:
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/<your-org>/FactoryGuard.git
+git clone https://github.com/Git-ARoy/FactoryGuard.git
 cd FactoryGuard
 
-# 2. Copy the environment configuration template
+# 2. Use Node.js 24 LTS
+nvm use 24
+
+# 3. Copy the environment configuration template
 cp .env.example .env
 
-# 3. Install dependencies
-npm install
+# 4. Configure your Azure credentials in .env
+# COSMOS_ENDPOINT, COSMOS_KEY, STORAGE_CONNECTION_STRING
 
-# 4. Start the development server
+# 5. Install dependencies & run development server
+npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser. The dashboard will load with live data immediately!
+Open [http://localhost:3000](http://localhost:3000) in your browser. FactoryGuard will auto-provision and connect to your Azure resources!
 
 ---
 
@@ -194,15 +199,15 @@ All environment variables are declared in `.env.example`:
 | `APP_ENV` | Application environment | `development` / `production` |
 | `APP_VERSION` | Application build version | `1.0.0` |
 | `PORT` | Local web server port | `3000` |
-| `COSMOS_ENDPOINT` | Azure Cosmos DB URI | `https://<account>.documents.azure.com:443/` *(leave blank for local mode)* |
-| `COSMOS_KEY` | Azure Cosmos DB Primary Key | `<key>` *(leave blank for local mode)* |
+| `COSMOS_ENDPOINT` | Azure Cosmos DB URI | `https://<account>.documents.azure.com:443/` |
+| `COSMOS_KEY` | Azure Cosmos DB Primary Key | `<key>` |
 | `COSMOS_DATABASE` | Database name | `factoryguard` |
 | `COSMOS_MACHINES_CONTAINER` | Machines container | `machines` (partition key: `/id`) |
 | `COSMOS_TELEMETRY_CONTAINER` | Telemetry container | `telemetry` (partition key: `/machineId`) |
 | `COSMOS_INCIDENTS_CONTAINER` | Incidents container | `incidents` (partition key: `/machineId`) |
 | `COSMOS_DOCUMENTS_CONTAINER` | Documents container | `documents` (partition key: `/machineId`) |
-| `STORAGE_ACCOUNT_URL` | Azure Blob Storage URL | `https://<account>.blob.core.windows.net` *(leave blank for local mode)* |
-| `STORAGE_CONNECTION_STRING` | Azure Storage Connection String | `DefaultEndpointsProtocol=https;...` *(leave blank for local mode)* |
+| `STORAGE_ACCOUNT_URL` | Azure Blob Storage URL | `https://<account>.blob.core.windows.net` |
+| `STORAGE_CONNECTION_STRING` | Azure Storage Connection String | `DefaultEndpointsProtocol=https;...` |
 | `STORAGE_CONTAINER_NAME` | Blob container name | `documents` |
 | `FUNCTION_BASE_URL` | Azure Functions API base URL | `http://localhost:7071` *(optional internal proxy)* |
 | `FUNCTION_INTERNAL_SECRET` | Azure Functions access key | `<key>` |
@@ -269,12 +274,15 @@ During **Azure LaunchPad 2026**, facilitators and participants can run this exac
 - Azure Function App (Node.js 24 LTS)
 - Application Insights resource
 
-### 2. Database & Storage Seeding:
-Once your Azure resources are created, configure `.env` with your Azure credentials and run:
+### 2. Zero-Touch Automatic Database & Storage Provisioning:
+You do **NOT** need to create the database, containers, or upload manuals manually in the Azure Portal! FactoryGuard is engineered with automatic cloud provisioning and auto-seeding:
+- Upon connecting to Azure Cosmos DB, the application automatically creates the `factoryguard` database and all 4 partitioned containers (`machines`, `telemetry`, `incidents`, `documents`), and automatically seeds the 24 industrial machinery records, telemetry history, incidents, and document metadata from `data/seed/`.
+- Upon connecting to Azure Blob Storage, it automatically provisions the `documents` container and uploads all sample technical manuals.
+
+If you ever wish to re-seed or verify your Azure database independently via CLI:
 ```bash
 npm run seed:cosmos
 ```
-This automatically provisions the required Cosmos DB containers (`machines`, `telemetry`, `incidents`, `documents`) and uploads sample technical manuals to the Blob Storage container.
 
 ### 3. Deploying Web Application to Azure App Service:
 You can deploy using GitHub Actions, Azure CLI, or VS Code Azure Tools:
@@ -291,9 +299,8 @@ Configure the Application Settings on App Service with the environment variables
 
 ## 9. Troubleshooting
 
-- **App fails to start locally**: Ensure you are using Node.js 24 (`node -v` or `nvm use 24`). Run `npm install` and `npm run dev`.
-- **Cosmos DB connection timeout**: If running against real Azure Cosmos DB, verify that your IP is allowed in the Cosmos DB Firewall settings, or check that `COSMOS_ENDPOINT` and `COSMOS_KEY` are correct.
-- **Blob download returns 403**: When using real Blob Storage, ensure your storage connection string contains an active account key to permit SAS generation, or use the built-in local document streaming mode.
+- **Cosmos DB connection failure / timeout**: Verify that your client IP or Azure App Service outbound IP is allowed in the Cosmos DB Firewall settings, or check that `COSMOS_ENDPOINT` and `COSMOS_KEY` are correct.
+- **Blob download returns 403**: Ensure your storage connection string contains an active account key to permit SAS generation, or verify container access policies in the Azure Portal.
 - **Port 3000 in use**: Specify a different port: `PORT=3001 npm run dev`.
 
 ---

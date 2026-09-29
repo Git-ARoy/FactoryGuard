@@ -1,16 +1,9 @@
-import { config } from '../config/env';
 import {
   IMachineRepository,
   ITelemetryRepository,
   IIncidentRepository,
   IDocumentRepository,
 } from './interfaces';
-import {
-  LocalMachineRepository,
-  LocalTelemetryRepository,
-  LocalIncidentRepository,
-  LocalDocumentRepository,
-} from './local';
 import {
   CosmosMachineRepository,
   CosmosTelemetryRepository,
@@ -26,38 +19,37 @@ class RepositoryFactory {
 
   getMachineRepository(): IMachineRepository {
     if (!this.machineRepo) {
-      this.machineRepo = config.cosmos.isConfigured
-        ? new CosmosMachineRepository()
-        : new LocalMachineRepository();
+      this.machineRepo = new CosmosMachineRepository();
     }
     return this.machineRepo;
   }
 
   getTelemetryRepository(): ITelemetryRepository {
     if (!this.telemetryRepo) {
-      this.telemetryRepo = config.cosmos.isConfigured
-        ? new CosmosTelemetryRepository()
-        : new LocalTelemetryRepository();
+      this.telemetryRepo = new CosmosTelemetryRepository();
     }
     return this.telemetryRepo;
   }
 
   getIncidentRepository(): IIncidentRepository {
     if (!this.incidentRepo) {
-      this.incidentRepo = config.cosmos.isConfigured
-        ? new CosmosIncidentRepository()
-        : new LocalIncidentRepository();
+      this.incidentRepo = new CosmosIncidentRepository();
     }
     return this.incidentRepo;
   }
 
   getDocumentRepository(): IDocumentRepository {
     if (!this.documentRepo) {
-      this.documentRepo = config.cosmos.isConfigured
-        ? new CosmosDocumentRepository()
-        : new LocalDocumentRepository();
+      this.documentRepo = new CosmosDocumentRepository();
     }
     return this.documentRepo;
+  }
+
+  resetRepositories(): void {
+    this.machineRepo = null;
+    this.telemetryRepo = null;
+    this.incidentRepo = null;
+    this.documentRepo = null;
   }
 }
 

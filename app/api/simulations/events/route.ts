@@ -44,28 +44,24 @@ export async function POST(req: NextRequest) {
     // If Azure Functions backend is configured, forward to Functions endpoint
     if (config.functions.isConfigured) {
       const functionUrl = `${config.functions.baseUrl}/api/simulations/events`;
-      try {
-        const headers: Record<string, string> = {
-          'Content-Type': 'application/json',
-        };
-        if (config.functions.internalSecret) {
-          headers['x-functions-key'] = config.functions.internalSecret;
-        }
-
-        const funcRes = await fetch(functionUrl, {
-          method: 'POST',
-          headers,
-          body: JSON.stringify({ machineId, scenario }),
-        });
-
-        const funcData = await funcRes.json();
-        return jsonResponse(funcData, funcRes.status);
-      } catch (funcErr) {
-        console.warn('Azure Function call failed, falling back to local service execution', funcErr);
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+      if (config.functions.internalSecret) {
+        headers['x-functions-key'] = config.functions.internalSecret;
       }
+
+      const funcRes = await fetch(functionUrl, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ machineId, scenario }),
+      });
+
+      const funcData = await funcRes.json();
+      return jsonResponse(funcData, funcRes.status);
     }
 
-    // Direct domain service execution
+    // App Service direct execution against Azure Cosmos DB
     const result = await simulationService.triggerEvent(
       machineId,
       scenario as SimulationScenario

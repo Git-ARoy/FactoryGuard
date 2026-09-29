@@ -27,8 +27,7 @@ async function seedAzure() {
   const cosmosDatabase = process.env.COSMOS_DATABASE || 'factoryguard';
 
   if (!cosmosEndpoint || !cosmosKey) {
-    console.warn('[Cosmos DB] COSMOS_ENDPOINT or COSMOS_KEY missing in environment.');
-    console.warn('[Cosmos DB] Skipping Cosmos DB remote seeding. Local in-memory repository will be used.');
+    console.error('[Cosmos DB] COSMOS_ENDPOINT or COSMOS_KEY missing in environment. Please provide credentials to seed Azure Cosmos DB.');
   } else {
     console.log(`[Cosmos DB] Connecting to ${cosmosEndpoint}...`);
     const client = new CosmosClient({ endpoint: cosmosEndpoint, key: cosmosKey });
@@ -89,8 +88,7 @@ async function seedAzure() {
   const storageContainerName = process.env.STORAGE_CONTAINER_NAME || 'documents';
 
   if (!storageConn && !storageUrl) {
-    console.warn('[Blob Storage] STORAGE_CONNECTION_STRING or STORAGE_ACCOUNT_URL missing in environment.');
-    console.warn('[Blob Storage] Skipping Blob Storage remote seeding. Local assets will be used.');
+    console.error('[Blob Storage] STORAGE_CONNECTION_STRING or STORAGE_ACCOUNT_URL missing in environment. Please provide credentials to seed Azure Blob Storage.');
   } else {
     console.log('[Blob Storage] Connecting to Azure Blob Storage...');
     const blobServiceClient = storageConn

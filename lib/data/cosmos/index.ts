@@ -18,13 +18,16 @@ import {
   DocumentMetadata,
 } from '../../domain/types';
 import { config } from '../../config/env';
+import { ensureCosmosDatabaseAndContainers } from './provisioner';
 
 let cosmosClientInstance: CosmosClient | null = null;
 
-function getCosmosClient(): CosmosClient {
+export function getCosmosClient(): CosmosClient {
   if (!cosmosClientInstance) {
     if (!config.cosmos.endpoint || !config.cosmos.key) {
-      throw new Error('Cosmos DB credentials not configured');
+      throw new Error(
+        'Azure Cosmos DB credentials not configured (COSMOS_ENDPOINT and COSMOS_KEY required)'
+      );
     }
     cosmosClientInstance = new CosmosClient({
       endpoint: config.cosmos.endpoint,
@@ -34,13 +37,18 @@ function getCosmosClient(): CosmosClient {
   return cosmosClientInstance;
 }
 
-function getContainer(containerName: string): Container {
+export function resetCosmosClient(): void {
+  cosmosClientInstance = null;
+}
+
+export async function getContainer(containerName: string): Promise<Container> {
   const client = getCosmosClient();
+  await ensureCosmosDatabaseAndContainers(client);
   return client.database(config.cosmos.database).container(containerName);
 }
 
 export class CosmosMachineRepository implements IMachineRepository {
-  private get container(): Container {
+  private async getContainer(): Promise<Container> {
     return getContainer(config.cosmos.containers.machines);
   }
 
@@ -65,7 +73,8 @@ export class CosmosMachineRepository implements IMachineRepository {
     const limit = Math.min(filters?.limit || 100, 100);
     query += ` ORDER BY c.id ASC OFFSET 0 LIMIT ${limit}`;
 
-    const { resources } = await this.container.items
+    const container = await this.getContainer();
+    const { resources } = await container.items
       .query<Machine>({ query, parameters })
       .fetchAll();
 
@@ -74,7 +83,8 @@ export class CosmosMachineRepository implements IMachineRepository {
 
   async getById(id: string): Promise<Machine | null> {
     try {
-      const { resource } = await this.container.item(id, id).read<Machine>();
+      const container = await this.getContainer();
+      const { resource } = await container.item(id, id).read<Machine>();
       return resource || null;
     } catch (err: unknown) {
       if ((err as { statusCode?: number }).statusCode === 404) return null;
@@ -87,7 +97,8 @@ export class CosmosMachineRepository implements IMachineRepository {
       ...machine,
       updatedAt: new Date().toISOString(),
     };
-    const { resource } = await this.container.items.upsert<Machine>(updated);
+    const container = await this.getContainer();
+    const { resource } = await container.items.upsert<Machine>(updated);
     return resource!;
   }
 
@@ -110,20 +121,20 @@ export class CosmosMachineRepository implements IMachineRepository {
       updatedAt: new Date().toISOString(),
     };
 
-    const { resource } = await this.container.items.upsert<Machine>(updated);
+    const container = await this.getContainer();
+    const { resource } = await container.items.upsert<Machine>(updated);
     return resource!;
   }
 }
 
 export class CosmosTelemetryRepository implements ITelemetryRepository {
-  private get container(): Container {
+  private async getContainer(): Promise<Container> {
     return getContainer(config.cosmos.containers.telemetry);
   }
 
   async record(event: TelemetryEvent): Promise<TelemetryEvent> {
-    const { resource } = await this.container.items.create<TelemetryEvent>(
-      event
-    );
+    const container = await this.getContainer();
+    const { resource } = await container.items.create<TelemetryEvent>(event);
     return resource!;
   }
 
@@ -148,7 +159,8 @@ export class CosmosTelemetryRepository implements ITelemetryRepository {
     const limit = Math.min(filters?.limit || 20, 100);
     query += ` ORDER BY c.timestamp DESC OFFSET 0 LIMIT ${limit}`;
 
-    const { resources } = await this.container.items
+    const container = await this.getContainer();
+    const { resources } = await container.items
       .query<TelemetryEvent>(
         { query, parameters },
         { partitionKey: machineId }
@@ -165,7 +177,7 @@ export class CosmosTelemetryRepository implements ITelemetryRepository {
 }
 
 export class CosmosIncidentRepository implements IIncidentRepository {
-  private get container(): Container {
+  private async getContainer(): Promise<Container> {
     return getContainer(config.cosmos.containers.incidents);
   }
 
@@ -189,7 +201,8 @@ export class CosmosIncidentRepository implements IIncidentRepository {
     const limit = Math.min(filters?.limit || 25, 100);
     query += ` ORDER BY c.detectedAt DESC OFFSET 0 LIMIT ${limit}`;
 
-    const { resources } = await this.container.items
+    const container = await this.getContainer();
+    const { resources } = await container.items
       .query<Incident>({ query, parameters })
       .fetchAll();
 
@@ -198,7 +211,8 @@ export class CosmosIncidentRepository implements IIncidentRepository {
 
   async getById(id: string): Promise<Incident | null> {
     const query = 'SELECT * FROM c WHERE c.id = @id';
-    const { resources } = await this.container.items
+    const container = await this.getContainer();
+    const { resources } = await container.items
       .query<Incident>({
         query,
         parameters: [{ name: '@id', value: id }],
@@ -211,7 +225,8 @@ export class CosmosIncidentRepository implements IIncidentRepository {
   async findActiveByMachine(machineId: string): Promise<Incident[]> {
     const query =
       'SELECT * FROM c WHERE c.machineId = @machineId AND c.status = "OPEN"';
-    const { resources } = await this.container.items
+    const container = await this.getContainer();
+    const { resources } = await container.items
       .query<Incident>(
         {
           query,
@@ -230,7 +245,8 @@ export class CosmosIncidentRepository implements IIncidentRepository {
   ): Promise<Incident | null> {
     const query =
       'SELECT * FROM c WHERE c.machineId = @machineId AND c.type = @type AND c.status = "OPEN"';
-    const { resources } = await this.container.items
+    const container = await this.getContainer();
+    const { resources } = await container.items
       .query<Incident>(
         {
           query,
@@ -247,12 +263,14 @@ export class CosmosIncidentRepository implements IIncidentRepository {
   }
 
   async create(incident: Incident): Promise<Incident> {
-    const { resource } = await this.container.items.create<Incident>(incident);
+    const container = await this.getContainer();
+    const { resource } = await container.items.create<Incident>(incident);
     return resource!;
   }
 
   async update(incident: Incident): Promise<Incident> {
-    const { resource } = await this.container.items.upsert<Incident>(incident);
+    const container = await this.getContainer();
+    const { resource } = await container.items.upsert<Incident>(incident);
     return resource!;
   }
 
@@ -287,7 +305,7 @@ export class CosmosIncidentRepository implements IIncidentRepository {
 }
 
 export class CosmosDocumentRepository implements IDocumentRepository {
-  private get container(): Container {
+  private async getContainer(): Promise<Container> {
     return getContainer(config.cosmos.containers.documents);
   }
 
@@ -304,7 +322,8 @@ export class CosmosDocumentRepository implements IDocumentRepository {
       parameters.push({ name: '@category', value: filters.category });
     }
 
-    const { resources } = await this.container.items
+    const container = await this.getContainer();
+    const { resources } = await container.items
       .query<DocumentMetadata>({ query, parameters })
       .fetchAll();
 
@@ -313,7 +332,8 @@ export class CosmosDocumentRepository implements IDocumentRepository {
 
   async getById(id: string): Promise<DocumentMetadata | null> {
     const query = 'SELECT * FROM c WHERE c.id = @id';
-    const { resources } = await this.container.items
+    const container = await this.getContainer();
+    const { resources } = await container.items
       .query<DocumentMetadata>({
         query,
         parameters: [{ name: '@id', value: id }],
@@ -324,9 +344,8 @@ export class CosmosDocumentRepository implements IDocumentRepository {
   }
 
   async create(doc: DocumentMetadata): Promise<DocumentMetadata> {
-    const { resource } = await this.container.items.create<DocumentMetadata>(
-      doc
-    );
+    const container = await this.getContainer();
+    const { resource } = await container.items.create<DocumentMetadata>(doc);
     return resource!;
   }
 }

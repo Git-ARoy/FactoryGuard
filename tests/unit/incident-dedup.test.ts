@@ -1,14 +1,14 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { SimulationService } from '../../lib/services/simulation.service';
-import { localStore } from '../../lib/data/local/local-store';
 import { repositoryFactory } from '../../lib/data/factory';
+import { resetMockCosmosToSeed } from '../mocks/azure-cosmos-mock';
 
 describe('FactoryGuard Incident Deduplication & Resolution', () => {
   let simulationService: SimulationService;
   const incidentRepo = repositoryFactory.getIncidentRepository();
 
   beforeEach(() => {
-    localStore.resetToSeed();
+    resetMockCosmosToSeed();
     simulationService = new SimulationService();
   });
 

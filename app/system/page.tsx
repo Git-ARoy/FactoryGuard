@@ -58,7 +58,7 @@ export default function SystemArchitecturePage() {
       description:
         'Executes serverless telemetry ingestion, deterministic anomaly threshold evaluations, and incident state transitions without a dedicated server process.',
       techDetails: 'TypeScript Azure Functions v4 Model • HTTP Triggers • Stateless Serverless',
-      status: 'Integrated / Local Ready',
+      status: 'Azure Serverless Host Active',
       statusOk: true,
     },
     {
@@ -70,8 +70,8 @@ export default function SystemArchitecturePage() {
       description:
         'Provides low-latency NoSQL persistence for machinery metadata, continuous time-series telemetry events, and active/resolved incident records.',
       techDetails: 'Partitioning: machines (/id), telemetry (/machineId), incidents (/machineId)',
-      status: health?.dependencies.cosmos === 'ok' ? 'Azure Cosmos Connected' : 'Local In-Memory Mode',
-      statusOk: true,
+      status: health?.dependencies.cosmos === 'ok' ? 'Azure Cosmos DB Connected' : 'Connecting / Verifying',
+      statusOk: health?.dependencies.cosmos === 'ok',
     },
     {
       name: 'Azure Blob Storage',
@@ -82,8 +82,8 @@ export default function SystemArchitecturePage() {
       description:
         'Stores machine operating manuals, preventive maintenance procedures, and quarterly inspection reports with signed SAS authorization.',
       techDetails: 'Blob Container: documents • Short-lived SAS URLs (Read-Only 15m)',
-      status: health?.dependencies.storage === 'ok' ? 'Azure Blob Storage Connected' : 'Local Asset Mode',
-      statusOk: true,
+      status: health?.dependencies.storage === 'ok' ? 'Azure Blob Storage Connected' : 'Connecting / Verifying',
+      statusOk: health?.dependencies.storage === 'ok',
     },
     {
       name: 'Azure Application Insights',
@@ -140,7 +140,7 @@ export default function SystemArchitecturePage() {
         </div>
 
         <div className="text-[11px] text-slate-400">
-          Dual-Mode: Zero-dependency local development supported with automatic Cosmos/Blob fallback.
+          Cloud-Native: Auto-provisions database, containers, and seed documents directly on Azure.
         </div>
       </div>
 

@@ -143,7 +143,7 @@ export interface HealthCheckResponse {
   version: string;
   timestamp: string;
   dependencies: {
-    cosmos: 'ok' | 'local_fallback' | 'error';
-    storage: 'ok' | 'local_fallback' | 'error';
+    cosmos: 'ok' | 'error';
+    storage: 'ok' | 'error';
   };
 }

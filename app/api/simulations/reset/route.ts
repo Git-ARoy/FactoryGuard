@@ -28,25 +28,21 @@ export async function POST(req: NextRequest) {
   try {
     if (config.functions.isConfigured) {
       const functionUrl = `${config.functions.baseUrl}/api/simulations/reset`;
-      try {
-        const headers: Record<string, string> = {
-          'Content-Type': 'application/json',
-        };
-        if (config.functions.internalSecret) {
-          headers['x-functions-key'] = config.functions.internalSecret;
-        }
-
-        const funcRes = await fetch(functionUrl, {
-          method: 'POST',
-          headers,
-          body: JSON.stringify({ machineId }),
-        });
-
-        const funcData = await funcRes.json();
-        return jsonResponse(funcData, funcRes.status);
-      } catch (funcErr) {
-        console.warn('Azure Function call failed, falling back to local service execution', funcErr);
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+      if (config.functions.internalSecret) {
+        headers['x-functions-key'] = config.functions.internalSecret;
       }
+
+      const funcRes = await fetch(functionUrl, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ machineId }),
+      });
+
+      const funcData = await funcRes.json();
+      return jsonResponse(funcData, funcRes.status);
     }
 
     const result = await simulationService.resetMachine(machineId);

@@ -17,8 +17,9 @@ export interface DocumentDownloadInfo {
 
 export class BlobStorageService {
   private blobServiceClient: BlobServiceClient | null = null;
+  private provisionPromise: Promise<void> | null = null;
 
-  private getClient(): BlobServiceClient {
+  getClient(): BlobServiceClient {
     if (!this.blobServiceClient) {
       if (config.storage.connectionString) {
         this.blobServiceClient = BlobServiceClient.fromConnectionString(
@@ -27,107 +28,127 @@ export class BlobStorageService {
       } else if (config.storage.accountUrl) {
         this.blobServiceClient = new BlobServiceClient(config.storage.accountUrl);
       } else {
-        throw new Error('Azure Blob Storage credentials not configured');
+        throw new Error(
+          'Azure Blob Storage credentials not configured (STORAGE_CONNECTION_STRING or STORAGE_ACCOUNT_URL required)'
+        );
       }
     }
     return this.blobServiceClient;
   }
 
+  resetClient(): void {
+    this.blobServiceClient = null;
+    this.provisionPromise = null;
+  }
+
   /**
-   * Generates a signed download URL (SAS token) in Azure mode, or a local download route in local mode.
+   * Ensures the Azure Blob container exists and seeds initial sample documents
+   * so manual container creation or uploads in Azure are not required.
+   */
+  async ensureContainerAndBlobs(): Promise<void> {
+    if (this.provisionPromise) {
+      return this.provisionPromise;
+    }
+
+    this.provisionPromise = (async () => {
+      try {
+        const client = this.getClient();
+        const containerName = config.storage.containerName || 'documents';
+        const containerClient = client.getContainerClient(containerName);
+
+        await containerClient.createIfNotExists({ access: 'blob' });
+
+        const sampleDir = path.join(process.cwd(), 'data', 'seed', 'sample-docs');
+        if (fs.existsSync(sampleDir)) {
+          const files = fs.readdirSync(sampleDir);
+          for (const file of files) {
+            const blockBlobClient = containerClient.getBlockBlobClient(file);
+            const exists = await blockBlobClient.exists();
+            if (!exists) {
+              const filePath = path.join(sampleDir, file);
+              const fileBuffer = fs.readFileSync(filePath);
+              await blockBlobClient.upload(fileBuffer, fileBuffer.length, {
+                blobHTTPHeaders: {
+                  blobContentType: file.endsWith('.pdf') ? 'application/pdf' : 'text/plain',
+                },
+              });
+            }
+          }
+        }
+      } catch (err) {
+        this.provisionPromise = null;
+        console.error('[Blob Storage Provisioner] Container setup or blob seeding failed:', err);
+        throw err;
+      }
+    })();
+
+    return this.provisionPromise;
+  }
+
+  /**
+   * Generates a signed SAS download URL directly from Azure Blob Storage.
    */
   async getDownloadUrl(
     document: DocumentMetadata,
     expiresInMinutes = 15
   ): Promise<DocumentDownloadInfo> {
+    await this.ensureContainerAndBlobs();
+
     const expiresAt = new Date(Date.now() + expiresInMinutes * 60 * 1000).toISOString();
+    const containerName = config.storage.containerName || 'documents';
+    const containerClient = this.getClient().getContainerClient(containerName);
+    const blobClient = containerClient.getBlobClient(document.blobName);
 
-    if (!config.storage.isConfigured) {
-      // Local fallback mode: Return direct application download route
-      return {
-        documentId: document.id,
-        url: `/api/documents/${document.id}/content`,
-        expiresAt,
-      };
-    }
-
-    try {
-      const containerClient = this.getClient().getContainerClient(
-        config.storage.containerName
+    // If using connection string with account key, generate SAS URL
+    if (config.storage.connectionString && config.storage.connectionString.includes('AccountKey=')) {
+      const matches = config.storage.connectionString.match(
+        /AccountName=([^;]+);AccountKey=([^;]+)/
       );
-      const blobClient = containerClient.getBlobClient(document.blobName);
+      if (matches) {
+        const accountName = matches[1];
+        const accountKey = matches[2];
+        const sharedKeyCred = new StorageSharedKeyCredential(accountName, accountKey);
 
-      // If using connection string with account key, generate SAS URL
-      if (config.storage.connectionString.includes('AccountKey=')) {
-        const matches = config.storage.connectionString.match(
-          /AccountName=([^;]+);AccountKey=([^;]+)/
-        );
-        if (matches) {
-          const accountName = matches[1];
-          const accountKey = matches[2];
-          const sharedKeyCred = new StorageSharedKeyCredential(
-            accountName,
-            accountKey
-          );
+        const sasToken = generateBlobSASQueryParameters(
+          {
+            containerName,
+            blobName: document.blobName,
+            permissions: BlobSASPermissions.parse('r'),
+            startsOn: new Date(),
+            expiresOn: new Date(Date.now() + expiresInMinutes * 60 * 1000),
+          },
+          sharedKeyCred
+        ).toString();
 
-          const sasToken = generateBlobSASQueryParameters(
-            {
-              containerName: config.storage.containerName,
-              blobName: document.blobName,
-              permissions: BlobSASPermissions.parse('r'),
-              startsOn: new Date(),
-              expiresOn: new Date(Date.now() + expiresInMinutes * 60 * 1000),
-            },
-            sharedKeyCred
-          ).toString();
-
-          return {
-            documentId: document.id,
-            url: `${blobClient.url}?${sasToken}`,
-            expiresAt,
-          };
-        }
+        return {
+          documentId: document.id,
+          url: `${blobClient.url}?${sasToken}`,
+          expiresAt,
+        };
       }
-
-      // Default blob client URL
-      return {
-        documentId: document.id,
-        url: blobClient.url,
-        expiresAt,
-      };
-    } catch (err) {
-      console.error('Failed to generate Azure Blob SAS URL, falling back to local content route', err);
-      return {
-        documentId: document.id,
-        url: `/api/documents/${document.id}/content`,
-        expiresAt,
-      };
     }
+
+    // Default Azure Blob URL
+    return {
+      documentId: document.id,
+      url: blobClient.url,
+      expiresAt,
+    };
   }
 
   /**
-   * Reads file content for local fallback serving.
+   * Downloads blob content directly from Azure Blob Storage.
    */
-  getLocalDocumentContent(blobName: string): { buffer: Buffer; contentType: string } | null {
-    const samplePath = path.join(
-      process.cwd(),
-      'data',
-      'seed',
-      'sample-docs',
-      blobName
-    );
+  async downloadBlob(blobName: string): Promise<{ buffer: Buffer; contentType: string }> {
+    await this.ensureContainerAndBlobs();
+    const containerName = config.storage.containerName || 'documents';
+    const containerClient = this.getClient().getContainerClient(containerName);
+    const blobClient = containerClient.getBlobClient(blobName);
 
-    if (fs.existsSync(samplePath)) {
-      const buffer = fs.readFileSync(samplePath);
-      const contentType = blobName.endsWith('.pdf') ? 'application/pdf' : 'text/plain';
-      return { buffer, contentType };
-    }
+    const buffer = await blobClient.downloadToBuffer();
+    const contentType = blobName.endsWith('.pdf') ? 'application/pdf' : 'text/plain';
 
-    // Fallback generated content if file not found on disk
-    const content = Buffer.from(
-      `FACTORYGUARD INDUSTRIAL ARCHIVE\nDocument: ${blobName}\nGenerated for local workshop inspection.`
-    );
-    return { buffer: content, contentType: 'text/plain' };
+    return { buffer, contentType };
   }
 }
 
