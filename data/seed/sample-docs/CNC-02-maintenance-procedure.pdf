@@ -1,0 +1,23 @@
+FACTORYGUARD INDUSTRIAL SYSTEMS
+STANDARD OPERATING PROCEDURE: CNC-02 MAINTENANCE & CALIBRATION
+
+Document ID: SOP-CNC02-2026-REV2
+Machine ID: CNC-02 (Precision Line A, Bay A-02)
+Last Revised: 2026-01-15
+
+1. SAFETY PRECAUTIONS
+- Perform Lockout/Tagout (LOTO) on main 480V 3-phase power disconnect before opening cabinet.
+- Verify pneumatic pressure bleed-off to 0 PSI on manifold gauge G-102.
+- Ensure spindle chilling unit coolant reservoir is depressurized.
+
+2. VIBRATION BASELINE TOLERANCES (ISO 10816-3 Class II)
+- Normal Baseline: <= 2.8 mm/s RMS (Spindle speed 8,000 RPM idle).
+- Warning Threshold: 6.0 mm/s RMS. Action: Clean collet, inspect toolholder taper for fretting corrosion.
+- Critical Threshold: 10.0 mm/s RMS. Action: Immediate emergency shutdown. Replace hybrid ceramic bearings.
+
+3. THERMAL MANAGEMENT & LUBRICATION
+- Coolant delivery pressure must remain between 95 - 105 PSI.
+- Temperature warning boundary: 70°C. Check chiller fin dust buildup and flow rate sensor FL-201.
+- Use Mobil Vactra No. 2 slideway oil for X/Y/Z linear guideways.
+
+FactoryGuard Automated Monitoring Team

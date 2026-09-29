@@ -1,0 +1,21 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "node",
+    "COSMOS_ENDPOINT": "",
+    "COSMOS_KEY": "",
+    "COSMOS_DATABASE": "factoryguard",
+    "COSMOS_MACHINES_CONTAINER": "machines",
+    "COSMOS_TELEMETRY_CONTAINER": "telemetry",
+    "COSMOS_INCIDENTS_CONTAINER": "incidents",
+    "COSMOS_DOCUMENTS_CONTAINER": "documents",
+    "STORAGE_ACCOUNT_URL": "",
+    "STORAGE_CONNECTION_STRING": "",
+    "STORAGE_CONTAINER_NAME": "documents",
+    "APPLICATIONINSIGHTS_CONNECTION_STRING": ""
+  },
+  "Host": {
+    "CORS": "*"
+  }
+}

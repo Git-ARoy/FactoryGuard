@@ -1,0 +1,178 @@
+[
+  {
+    "id": "tel-cnc02-01",
+    "machineId": "CNC-02",
+    "timestamp": "2026-09-29T09:30:00.000Z",
+    "temperatureC": 58.2,
+    "vibrationMmS": 2.4,
+    "pressurePsi": 101.5,
+    "operatingHours": 4118,
+    "scenario": "NORMAL",
+    "source": "simulator"
+  },
+  {
+    "id": "tel-cnc02-02",
+    "machineId": "CNC-02",
+    "timestamp": "2026-09-29T09:35:00.000Z",
+    "temperatureC": 59.8,
+    "vibrationMmS": 2.6,
+    "pressurePsi": 102.1,
+    "operatingHours": 4118,
+    "scenario": "NORMAL",
+    "source": "simulator"
+  },
+  {
+    "id": "tel-cnc02-03",
+    "machineId": "CNC-02",
+    "timestamp": "2026-09-29T09:40:00.000Z",
+    "temperatureC": 61.3,
+    "vibrationMmS": 3.1,
+    "pressurePsi": 101.8,
+    "operatingHours": 4118,
+    "scenario": "NORMAL",
+    "source": "simulator"
+  },
+  {
+    "id": "tel-cnc02-04",
+    "machineId": "CNC-02",
+    "timestamp": "2026-09-29T09:45:00.000Z",
+    "temperatureC": 62.5,
+    "vibrationMmS": 3.8,
+    "pressurePsi": 103.2,
+    "operatingHours": 4119,
+    "scenario": "NORMAL",
+    "source": "simulator"
+  },
+  {
+    "id": "tel-cnc02-05",
+    "machineId": "CNC-02",
+    "timestamp": "2026-09-29T09:50:00.000Z",
+    "temperatureC": 64.9,
+    "vibrationMmS": 4.5,
+    "pressurePsi": 103.8,
+    "operatingHours": 4119,
+    "scenario": "NORMAL",
+    "source": "simulator"
+  },
+  {
+    "id": "tel-cnc02-06",
+    "machineId": "CNC-02",
+    "timestamp": "2026-09-29T09:55:00.000Z",
+    "temperatureC": 68.1,
+    "vibrationMmS": 5.4,
+    "pressurePsi": 104.2,
+    "operatingHours": 4119,
+    "scenario": "NORMAL",
+    "source": "simulator"
+  },
+  {
+    "id": "tel-cnc02-07",
+    "machineId": "CNC-02",
+    "timestamp": "2026-09-29T10:00:00.000Z",
+    "temperatureC": 71.4,
+    "vibrationMmS": 6.2,
+    "pressurePsi": 105.1,
+    "operatingHours": 4120,
+    "scenario": "WARNING",
+    "source": "simulator"
+  },
+  {
+    "id": "tel-cnc02-08",
+    "machineId": "CNC-02",
+    "timestamp": "2026-09-29T10:05:00.000Z",
+    "temperatureC": 74.2,
+    "vibrationMmS": 6.8,
+    "pressurePsi": 105.9,
+    "operatingHours": 4120,
+    "scenario": "WARNING",
+    "source": "simulator"
+  },
+  {
+    "id": "tel-cnc02-09",
+    "machineId": "CNC-02",
+    "timestamp": "2026-09-29T10:10:00.000Z",
+    "temperatureC": 76.8,
+    "vibrationMmS": 6.9,
+    "pressurePsi": 106.3,
+    "operatingHours": 4120,
+    "scenario": "WARNING",
+    "source": "simulator"
+  },
+  {
+    "id": "tel-cnc02-10",
+    "machineId": "CNC-02",
+    "timestamp": "2026-09-29T10:15:00.000Z",
+    "temperatureC": 78.0,
+    "vibrationMmS": 7.1,
+    "pressurePsi": 107.0,
+    "operatingHours": 4120,
+    "scenario": "WARNING",
+    "source": "simulator"
+  },
+  {
+    "id": "tel-cnc01-01",
+    "machineId": "CNC-01",
+    "timestamp": "2026-09-29T10:14:00.000Z",
+    "temperatureC": 56.4,
+    "vibrationMmS": 2.1,
+    "pressurePsi": 100.8,
+    "operatingHours": 3410,
+    "scenario": "NORMAL",
+    "source": "simulator"
+  },
+  {
+    "id": "tel-robot01-01",
+    "machineId": "ROBOT-01",
+    "timestamp": "2026-09-29T10:15:30.000Z",
+    "temperatureC": 52.1,
+    "vibrationMmS": 1.4,
+    "pressurePsi": 98.4,
+    "operatingHours": 1840,
+    "scenario": "NORMAL",
+    "source": "simulator"
+  },
+  {
+    "id": "tel-robot03-01",
+    "machineId": "ROBOT-03",
+    "timestamp": "2026-09-29T10:14:45.000Z",
+    "temperatureC": 76.5,
+    "vibrationMmS": 4.8,
+    "pressurePsi": 104.2,
+    "operatingHours": 3950,
+    "scenario": "WARNING",
+    "source": "simulator"
+  },
+  {
+    "id": "tel-press03-01",
+    "machineId": "PRESS-03",
+    "timestamp": "2026-09-29T10:15:20.000Z",
+    "temperatureC": 94.2,
+    "vibrationMmS": 11.4,
+    "pressurePsi": 119.8,
+    "operatingHours": 8100,
+    "scenario": "CRITICAL",
+    "source": "simulator"
+  },
+  {
+    "id": "tel-pump03-01",
+    "machineId": "PUMP-03",
+    "timestamp": "2026-09-29T10:15:15.000Z",
+    "temperatureC": 68.2,
+    "vibrationMmS": 7.6,
+    "pressurePsi": 109.1,
+    "operatingHours": 5400,
+    "scenario": "WARNING",
+    "source": "simulator"
+  },
+  {
+    "id": "tel-conv03-01",
+    "machineId": "CONV-03",
+    "timestamp": "2026-09-29T10:15:05.000Z",
+    "temperatureC": 74.8,
+    "vibrationMmS": 6.9,
+    "pressurePsi": 96.5,
+    "operatingHours": 6400,
+    "scenario": "WARNING",
+    "source": "simulator"
+  }
+]

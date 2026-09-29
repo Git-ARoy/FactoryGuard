@@ -1,0 +1,104 @@
+[
+  {
+    "id": "inc-001",
+    "machineId": "CNC-02",
+    "severity": "WARNING",
+    "type": "VIBRATION",
+    "title": "Abnormal Vibration Detected (7.1 mm/s)",
+    "description": "Machine vibration reached 7.1 mm/s, exceeding normal tolerance (6 mm/s). Indicates spindle bearing wear or tool unbalance.",
+    "status": "OPEN",
+    "detectedAt": "2026-09-29T10:15:00.000Z",
+    "resolvedAt": null,
+    "triggerTelemetryId": "tel-cnc02-10",
+    "telemetrySnapshot": {
+      "temperatureC": 78.0,
+      "vibrationMmS": 7.1,
+      "pressurePsi": 107.0
+    }
+  },
+  {
+    "id": "inc-002",
+    "machineId": "PRESS-03",
+    "severity": "CRITICAL",
+    "type": "MULTI_SIGNAL",
+    "title": "Severe Multi-Signal Operating Anomaly",
+    "description": "Operating parameters crossed critical bands: Temperature: 94.2°C, Vibration: 11.4 mm/s, Pressure: 119.8 PSI. Main hydraulic ram overheating.",
+    "status": "OPEN",
+    "detectedAt": "2026-09-29T10:15:20.000Z",
+    "resolvedAt": null,
+    "triggerTelemetryId": "tel-press03-01",
+    "telemetrySnapshot": {
+      "temperatureC": 94.2,
+      "vibrationMmS": 11.4,
+      "pressurePsi": 119.8
+    }
+  },
+  {
+    "id": "inc-003",
+    "machineId": "ROBOT-03",
+    "severity": "WARNING",
+    "type": "TEMPERATURE",
+    "title": "Elevated Operating Temperature (76.5°C)",
+    "description": "Operating temperature exceeded normal threshold (70°C). Wrist joint servomotor temperature running hot under continuous duty cycle.",
+    "status": "OPEN",
+    "detectedAt": "2026-09-29T10:14:45.000Z",
+    "resolvedAt": null,
+    "triggerTelemetryId": "tel-robot03-01",
+    "telemetrySnapshot": {
+      "temperatureC": 76.5,
+      "vibrationMmS": 4.8,
+      "pressurePsi": 104.2
+    }
+  },
+  {
+    "id": "inc-004",
+    "machineId": "PUMP-03",
+    "severity": "WARNING",
+    "type": "VIBRATION",
+    "title": "Abnormal Vibration Level (7.6 mm/s)",
+    "description": "Pump vibration reached 7.6 mm/s. Impeller cavitation or shaft misalignment suspected.",
+    "status": "OPEN",
+    "detectedAt": "2026-09-29T10:15:15.000Z",
+    "resolvedAt": null,
+    "triggerTelemetryId": "tel-pump03-01",
+    "telemetrySnapshot": {
+      "temperatureC": 68.2,
+      "vibrationMmS": 7.6,
+      "pressurePsi": 109.1
+    }
+  },
+  {
+    "id": "inc-005",
+    "machineId": "CONV-03",
+    "severity": "WARNING",
+    "type": "VIBRATION",
+    "title": "Abnormal Vibration Level (6.9 mm/s)",
+    "description": "Conveyor roller drive vibration exceeded normal threshold. Drive chain tension loose.",
+    "status": "OPEN",
+    "detectedAt": "2026-09-29T10:15:05.000Z",
+    "resolvedAt": null,
+    "triggerTelemetryId": "tel-conv03-01",
+    "telemetrySnapshot": {
+      "temperatureC": 74.8,
+      "vibrationMmS": 6.9,
+      "pressurePsi": 96.5
+    }
+  },
+  {
+    "id": "inc-000",
+    "machineId": "CNC-01",
+    "severity": "WARNING",
+    "type": "TEMPERATURE",
+    "title": "Coolant Fluctuation Alert (72°C)",
+    "description": "Transient thermal spike due to coolant filter blockage. Filter swapped and verified.",
+    "status": "RESOLVED",
+    "detectedAt": "2026-09-28T14:20:00.000Z",
+    "resolvedAt": "2026-09-28T15:05:00.000Z",
+    "triggerTelemetryId": "tel-cnc01-hist",
+    "telemetrySnapshot": {
+      "temperatureC": 72.4,
+      "vibrationMmS": 3.2,
+      "pressurePsi": 104.0
+    }
+  }
+]

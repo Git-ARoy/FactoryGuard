@@ -1,0 +1,19 @@
+FACTORYGUARD INDUSTRIAL SYSTEMS
+EQUIPMENT MANUAL: CNC MACHINING CENTER REVISION 4
+
+Model Series: FG-Precision-5X
+Applicable Machines: CNC-01, CNC-02, CNC-03, CNC-04
+
+1. OPERATIONAL SPECIFICATIONS
+- Operating Voltage: 480 VAC +/- 10%, 3 Phase, 60 Hz
+- Full Load Amps: 65 A
+- Spindle Motor: 22 kW Continuous, 30 kW Peak
+- Maximum Tool Weight: 8.0 kg (17.6 lbs)
+- Maximum Tool Diameter: 90 mm (3.54 in)
+
+2. TELEMETRY SENSOR LOCATIONS
+- TE-101: Front Spindle Bearing RTD Pt100
+- VE-201: Dual-Axis Piezoelectric Accelerometer on Spindle Nose
+- PE-301: Through-Spindle Coolant Line Piezoresistive Transducer
+
+For technical support or firmware diagnostics, consult the FactoryGuard Operations Portal.

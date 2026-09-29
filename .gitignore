@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Next.js
+.next/
+out/
+build/
+dist/
+
+# Azure Functions
+functions/dist/
+functions/node_modules/
+local.settings.json
+
+# Environment files - NEVER commit secrets
+.env
+.env*.local
+.env.production
+.env.staging
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS / Editor
+.DS_Store
+*.pem
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+
+# Testing & Coverage
+coverage/
+.nyc_output/
+*.tsbuildinfo
+
+# Azure / Local artifacts
+.azure/
+azure-functions/
