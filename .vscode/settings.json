@@ -10,5 +10,6 @@
         "node_modules{,/**}",
         ".vscode{,/**}"
     ],
-    "appService.deploySubpath": "."
+    "appService.deploySubpath": ".",
+    "appService.defaultWebAppToDeploy": "/subscriptions/f282e7fa-8220-48a9-9138-5f1513a1ac14/resourceGroups/rg-factoryguard/providers/Microsoft.Web/sites/fg-factoryguard-appservice"
 }
