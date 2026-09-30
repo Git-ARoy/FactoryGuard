@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { errorResponse } from '@/lib/api-client/response';
 import { repositoryFactory } from '@/lib/data/factory';
 import { blobStorageService } from '@/lib/storage';
+import { TelemetryLogger } from '@/lib/observability';
 
 export const dynamic = 'force-dynamic';
 
@@ -30,6 +31,10 @@ export async function GET(
     });
   } catch (err: unknown) {
     const error = err as Error;
+    TelemetryLogger.trackException(error, {
+      endpoint: `/api/documents/${documentId}/content`,
+      documentId,
+    });
     return errorResponse(
       'STORAGE_ERROR',
       `Failed to retrieve document from Azure Blob Storage: ${error.message}`,

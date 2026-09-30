@@ -97,15 +97,16 @@ export default function MachineDetailPage() {
     }
   };
 
-  const handleDownload = async (docId: string, name: string) => {
+  const handleDownload = async (docId: string, _name: string) => {
     try {
       const info = await apiClient.getDocumentDownloadUrl(docId);
       if (info?.url) {
         window.open(info.url, '_blank');
+      } else {
+        throw new Error('Missing download URL');
       }
-    } catch (err: unknown) {
-      const error = err as Error;
-      alert(`Download failed: ${error.message}`);
+    } catch {
+      alert('Download failed. Please check the Blob Storage configuration.');
     }
   };
 

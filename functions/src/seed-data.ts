@@ -645,36 +645,5 @@ export const seedDocuments = [
     "contentType": "application/pdf",
     "sizeBytes": 118784,
     "createdAt": "2025-06-20T10:30:00.000Z"
-  },
-  {
-    "id": "doc-003",
-    "machineId": "PRESS-03",
-    "name": "Punch Press Hydraulic Seals Inspection Report Q3.pdf",
-    "category": "INSPECTION",
-    "blobName": "PRESS-03-inspection-q3.pdf",
-    "contentType": "application/pdf",
-    "sizeBytes": 32768,
-    "createdAt": "2026-09-10T14:00:00.000Z"
-  },
-  {
-    "id": "doc-004",
-    "machineId": "ROBOT-01",
-    "name": "6-Axis Robot Arm Safety & Emergency Stop SOP.pdf",
-    "category": "MANUAL",
-    "blobName": "ROBOT-safety-sop.pdf",
-    "contentType": "application/pdf",
-    "sizeBytes": 19456,
-    "createdAt": "2025-08-01T11:15:00.000Z"
-  },
-  {
-    "id": "doc-005",
-    "machineId": "PUMP-01",
-    "name": "Hydraulic Feed Pump Vibration Analysis & ISO 10816 Report.pdf",
-    "category": "REPORT",
-    "blobName": "PUMP-01-vibration-report.pdf",
-    "contentType": "application/pdf",
-    "sizeBytes": 45056,
-    "createdAt": "2026-08-18T16:20:00.000Z"
   }
-]
-;
+];

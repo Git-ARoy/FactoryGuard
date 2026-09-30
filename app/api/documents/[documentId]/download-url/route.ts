@@ -28,11 +28,15 @@ export async function GET(
       endpoint: `/api/documents/${documentId}/download-url`,
       documentId,
     });
+
+    const isNotFound = error.message.includes('not found in Blob Storage');
+    const statusCode = isNotFound ? 404 : 500;
+    const errorCode = isNotFound ? 'BLOB_NOT_FOUND' : 'STORAGE_CONFIGURATION_ERROR';
+
     return errorResponse(
-      'INTERNAL_ERROR',
-      `Failed to generate download URL for document ${documentId}`,
-      500,
-      error.message
+      errorCode,
+      `Failed to generate download URL for document ${documentId}: ${error.message}`,
+      statusCode
     );
   }
 }

@@ -48,15 +48,21 @@ export default function DocumentsPage() {
     fetchDocs();
   }, [fetchDocs]);
 
+  const [downloadError, setDownloadError] = useState<string | null>(null);
+
   const handleDownload = async (doc: DocumentMetadata) => {
     try {
+      setDownloadError(null);
       const res = await apiClient.getDocumentDownloadUrl(doc.id);
       if (res?.url) {
         window.open(res.url, '_blank');
+      } else {
+        throw new Error('Missing download URL');
       }
-    } catch (err: unknown) {
-      const error = err as Error;
-      alert(`Download failed: ${error.message}`);
+    } catch {
+      const userMessage = 'Download failed. Please check the Blob Storage configuration.';
+      setDownloadError(userMessage);
+      alert(userMessage);
     }
   };
 
@@ -150,6 +156,10 @@ export default function DocumentsPage() {
           </button>
         )}
       </div>
+
+      {downloadError && (
+        <ErrorBanner message={downloadError} onRetry={() => setDownloadError(null)} />
+      )}
 
       {/* Documents Grid */}
       {loading ? (

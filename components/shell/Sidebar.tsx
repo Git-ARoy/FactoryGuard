@@ -9,7 +9,6 @@ import {
   AlertTriangle,
   PlayCircle,
   FileText,
-  Activity,
   Layers,
 } from 'lucide-react';
 
@@ -47,12 +46,6 @@ export function Sidebar() {
       label: 'Machine Docs',
       icon: FileText,
       active: pathname.startsWith('/documents'),
-    },
-    {
-      href: '/system',
-      label: 'Cloud Architecture',
-      icon: Activity,
-      active: pathname === '/system',
     },
   ];
 
